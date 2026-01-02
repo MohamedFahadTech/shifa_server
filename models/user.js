@@ -32,16 +32,9 @@ const userSchema = new mongoose.Schema(
 			default: "user",
 		},
 
-		addresses: [
-			{
-				label: { type: String, default: "Home" },
-				addressLine: { type: String, required: true },
-				area: String,
-				city: { type: String, default: "Chennai" },
-				pincode: String,
-				isDefault: { type: Boolean, default: false },
-			}
-		],
+		addresses: {
+			type: String,
+		},
 
 		isActive: {
 			type: Boolean,

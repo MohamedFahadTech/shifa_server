@@ -2,6 +2,8 @@ const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
 
+// ---------------------------------------------------------------------------------------------------------
+
 const app = express();
 
 app.use(cors({
@@ -12,6 +14,8 @@ app.use(cors({
 require("dotenv").config();
 const user = require("./models/user");
 
+// ---------------------------------------------------------------------------------------------------------
+
 connectDB();
 
 app.use(express.json());
@@ -21,12 +25,15 @@ app.listen(PORT, () =>
 	console.log(`Server running on http://localhost:${PORT}`)
 );
 
+// ---------------------------------------------------------------------------------------------------------
+
+// For user login
+
 app.post("/user/login", async (req, res) => {
 
 	const { email, password } = req.body;
 
 	const userExist = await user.findOne({ email: email });
-	console.log(userExist)
 
 	if (userExist) {
 
@@ -40,4 +47,7 @@ app.post("/user/login", async (req, res) => {
 	else {
 		return res.json({ message: 'User not found', success: false })
 	}
-});
+})
+
+// ---------------------------------------------------------------------------------------------------------
+
