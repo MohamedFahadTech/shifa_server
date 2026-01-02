@@ -11,8 +11,9 @@ app.use(cors({
 	credentials: true
 }));
 
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 const user = require("./models/user");
+const service = require("./models/service");
 
 // ---------------------------------------------------------------------------------------------------------
 
@@ -102,4 +103,14 @@ app.post("/user/signup", async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------------------------------------
+// GET all service categories (Shirt, Pant, Saree)
+app.get("/services", async (req, res) => {
+	try {
+		const services = await service.find();
+		res.json({ success: true, data: services });
+	} catch (error) {
+		res.status(500).json({ success: false, message: "Failed to fetch services" });
+	}
+});
+
 
