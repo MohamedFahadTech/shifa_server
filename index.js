@@ -113,4 +113,14 @@ app.get("/services", async (req, res) => {
 	}
 });
 
+// Add this to your Express server file
+app.get("/users", async (req, res) => {
+    try {
+        // Find all users with role 'user'
+        const customers = await user.find({ role: "user" });
+        res.json({ success: true, data: customers });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error fetching customers" });
+    }
+});
 
