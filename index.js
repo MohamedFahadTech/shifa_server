@@ -14,6 +14,9 @@ app.use(cors({
 require("dotenv").config({ quiet: true });
 const user = require("./models/user");
 const service = require("./models/service");
+const order = require("./models/Order");
+
+
 
 // ---------------------------------------------------------------------------------------------------------
 
@@ -124,3 +127,24 @@ app.get("/users", async (req, res) => {
     }
 });
 
+
+app.post("/orders", async (req, res) => {
+    try {
+        const { items, totalAmount } = req.body;
+
+        if (!items || items.length === 0) {
+            return res.status(400).json({ success: false, message: "Cart is empty" });
+        }
+
+        const newOrder = new order({
+            items,
+            totalAmount
+        });
+
+        await newOrder.save();
+        res.status(201).json({ success: true, orderId: newOrder._id });
+    } catch (error) {
+        console.error("Order Error:", error);
+        res.status(500).json({ success: false, message: "Failed to place order" });
+    }
+});
