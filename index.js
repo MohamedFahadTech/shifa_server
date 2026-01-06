@@ -35,7 +35,7 @@ app.listen(PORT, () =>
 
 app.post("/user/login", async (req, res) => {
     const { email, password } = req.body;
-    const userExist = await user.findOne({ email: email });
+    const userExist = await user.findOne({ phone: email });
 
     if (userExist) {
         if (userExist.password === password) {
