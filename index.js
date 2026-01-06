@@ -34,25 +34,33 @@ app.listen(PORT, () =>
 // For user login
 
 app.post("/user/login", async (req, res) => {
+    const { email, password } = req.body;
+    const userExist = await user.findOne({ email: email });
 
-	const { email, password } = req.body;
+    if (userExist) {
+        if (userExist.password === password) {
+            // Create a user object without the password
+            const userData = {
+                id: userExist._id,
+                name: userExist.name,
+                email: userExist.email,
+                phone: userExist.phone,
+                role: userExist.role,
+                address: userExist.addresses
+            };
 
-	const userExist = await user.findOne({ email: email });
-
-	if (userExist) {
-
-		if (userExist.password === password) {
-			return res.json({ message: 'Login successful', success: true })
-		}
-		else {
-			return res.json({ message: 'Password does not match', success: false })
-		}
-	}
-	else {
-		return res.json({ message: 'User not found', success: false })
-	}
-})
-
+            return res.json({ 
+                message: 'Login successful', 
+                success: true, 
+                user: userData // Send user data back
+            });
+        } else {
+            return res.json({ message: 'Password does not match', success: false });
+        }
+    } else {
+        return res.json({ message: 'User not found', success: false });
+    }
+});
 // ---------------------------------------------------------------------------------------------------------
 
 app.post("/user/signup", async (req, res) => {
