@@ -136,23 +136,41 @@ app.get("/users", async (req, res) => {
 });
 
 
+// Replace your existing /orders route with this:
 app.post("/orders", async (req, res) => {
     try {
-        const { items, totalAmount } = req.body;
+        // 1. Log the data to see what React is sending
+        console.log("Order Received:", req.body);
 
+        const { userId, items, totalAmount, pickup, payment } = req.body;
+
+        // 2. Validate mandatory fields before saving
         if (!items || items.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
         }
 
+        // 3. Create the document matching your Schema
         const newOrder = new order({
+            userId,
             items,
-            totalAmount
+            totalAmount,
+            pickup: {
+                address: pickup.address,
+                pickupDate: pickup.pickupDate,
+                pickupSlot: pickup.pickupSlot
+            },
+            payment: {
+                method: payment.method,
+                status: "Pending" // Default as per schema
+            }
         });
 
         await newOrder.save();
         res.status(201).json({ success: true, orderId: newOrder._id });
+        
     } catch (error) {
-        console.error("Order Error:", error);
-        res.status(500).json({ success: false, message: "Failed to place order" });
+        // 4. LOG THE ACTUAL ERROR TO THE TERMINAL
+        console.error("Mongoose Error:", error.message);
+        res.status(500).json({ success: false, error: error.message });
     }
 });
