@@ -68,6 +68,7 @@ app.post("/user/signup", async (req, res) => {
 	try {
 
 		const { name, email, password, phone, address } = req.body;
+		console.log(req.body)
 
 		// Validation
 		if (!name || !email || !password || !phone || !address) {
@@ -173,4 +174,16 @@ app.post("/orders", async (req, res) => {
         console.error("Mongoose Error:", error.message);
         res.status(500).json({ success: false, error: error.message });
     }
+});
+
+// index.js
+app.get("/orders", async (req, res) => {
+  try {
+    // Fetch orders and sort by newest first
+    const orders = await order.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    console.error("Fetch Error:", error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
