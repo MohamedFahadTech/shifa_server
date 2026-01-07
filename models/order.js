@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
 
-/* ORDER ITEM (CART ITEM) */
+/* ORDER ITEM (CART ITEM) - No changes here */
 const orderItemSchema = new mongoose.Schema(
   {
     category: {
       type: String,
-      required: true, // Shirt, Pant, Saree
+      required: true, 
       trim: true
     },
 
     fabric: {
       type: String,
-      required: true, // Cotton, Silk
+      required: true, 
       trim: true
     },
 
@@ -61,6 +61,13 @@ const orderSchema = new mongoose.Schema(
     userId: {
       type: String,
       required: true
+    },
+
+    // --- ADDED THIS FIELD ---
+    phoneNo: {
+      type: String,
+      required: true,
+      trim: true
     },
 
     /* ITEMS */
