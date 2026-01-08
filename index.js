@@ -172,7 +172,7 @@ app.get("/orders/user/:phoneNo", async (req, res) => {
     try {
 
         const { phoneNo } = req.params;
-s
+
         const userOrders = await order
             .find({ userId: phoneNo })
             .sort({ createdAt: -1 });
