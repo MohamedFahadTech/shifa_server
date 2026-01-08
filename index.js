@@ -147,3 +147,25 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
     console.log(`Server running on http://localhost:${PORT}`)
 );
+// GET orders by phone number (USER SIDE)
+app.get("/orders/user/:phoneNo", async (req, res) => {
+  try {
+    const { phoneNo } = req.params;
+
+    const userOrders = await order
+      .find({ phoneNo })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: userOrders
+    });
+
+  } catch (error) {
+    console.error("User Orders Fetch Error:", error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
