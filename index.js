@@ -6,7 +6,7 @@ require("dotenv").config({ quiet: true });
 // Import Models
 const user = require("./models/user");
 const service = require("./models/service");
-const order = require("./models/Order"); // This variable is named 'order'
+const order = require("./models/Order");
 
 const app = express();
 
@@ -23,7 +23,9 @@ connectDB();
 // ---------------------------------------------------------------------------------------------------------
 
 // User Login
+
 app.post("/user/login", async (req, res) => {
+
     const { email, password } = req.body;
     const userExist = await user.findOne({ phone: email });
 
@@ -38,10 +40,10 @@ app.post("/user/login", async (req, res) => {
                 address: userExist.addresses
             };
 
-            return res.json({ 
-                message: 'Login successful', 
-                success: true, 
-                user: userData 
+            return res.json({
+                message: 'Login successful',
+                success: true,
+                user: userData
             });
         } else {
             return res.json({ message: 'Password does not match', success: false });
@@ -51,9 +53,14 @@ app.post("/user/login", async (req, res) => {
     }
 });
 
+// ---------------------------------------------------------------------------------------------------------
+
 // User Signup
+
 app.post("/user/signup", async (req, res) => {
+
     try {
+
         const { name, email, password, phone, address } = req.body;
         if (!name || !email || !password || !phone || !address) {
             return res.json({ success: false, message: "All fields are required" });
@@ -77,8 +84,11 @@ app.post("/user/signup", async (req, res) => {
 // ---------------------------------------------------------------------------------------------------------
 
 // GET all services
+
 app.get("/services", async (req, res) => {
+
     try {
+
         const services = await service.find();
         res.json({ success: true, data: services });
     } catch (error) {
@@ -86,8 +96,12 @@ app.get("/services", async (req, res) => {
     }
 });
 
+// ---------------------------------------------------------------------------------------------------------
+
 // GET all customers
+
 app.get("/users", async (req, res) => {
+
     try {
         const customers = await user.find({ role: "user" });
         res.json({ success: true, data: customers });
@@ -99,46 +113,82 @@ app.get("/users", async (req, res) => {
 // ---------------------------------------------------------------------------------------------------------
 
 // CREATE Order
-app.post("/orders", async (req, res) => {
-    try {
-        console.log("Incoming Order Data:", req.body); 
 
-        // Important: Using 'order' because that is how you required it at the top
+app.post("/orders", async (req, res) => {
+
+    try {
+
         const newOrder = new order({
             userId: req.body.userId,
-            phoneNo: req.body.phoneNo, 
             items: req.body.items,
             totalAmount: req.body.totalAmount,
             pickup: {
                 address: req.body.pickup.address,
                 pickupDate: req.body.pickup.pickupDate,
-                pickupSlot: req.body.pickup.pickupSlot
+                pickupSlot: req.body.pickup.pickupSlot,
+                phoneNo: req.body.pickup.phoneNo
             },
-            payment: {
-                method: req.body.payment.method
-            }
+            payment: { method: req.body.payment.method }
         });
 
         const savedOrder = await newOrder.save();
-        console.log("Order Saved Successfully:", savedOrder._id);
-        res.status(201).json({ success: true, message: "Order placed successfully!", data: savedOrder });
-        
+
+        res.status(201).json({
+            success: true,
+            message: "Order placed successfully!",
+            data: savedOrder
+        });
+
     } catch (err) {
-        // This will print the specific validation error in your terminal
         console.error("Database Save Error:", err.message);
-        res.status(500).json({ success: false, error: err.message });
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
     }
 });
 
+// ---------------------------------------------------------------------------------------------------------
+
 // GET all orders
+
 app.get("/orders", async (req, res) => {
-  try {
-    const orders = await order.find().sort({ createdAt: -1 });
-    res.status(200).json({ success: true, data: orders });
-  } catch (error) {
-    console.error("Fetch Error:", error.message);
-    res.status(500).json({ success: false, error: error.message });
-  }
+
+    try {
+        const orders = await order.find().sort({ createdAt: -1 });
+        res.status(200).json({ success: true, data: orders });
+    } catch (error) {
+        console.error("Fetch Error:", error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ---------------------------------------------------------------------------------------------------------
+
+// GET orders by user phone number
+
+app.get("/orders/user/:phoneNo", async (req, res) => {
+
+    try {
+
+        const { phoneNo } = req.params;
+s
+        const userOrders = await order
+            .find({ userId: phoneNo })
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            data: userOrders
+        });
+
+    } catch (error) {
+        console.error("User Orders Fetch Error:", error.message);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
 });
 
 // ---------------------------------------------------------------------------------------------------------
@@ -147,25 +197,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
     console.log(`Server running on http://localhost:${PORT}`)
 );
-// GET orders by phone number (USER SIDE)
-app.get("/orders/user/:phoneNo", async (req, res) => {
-  try {
-    const { phoneNo } = req.params;
-
-    const userOrders = await order
-      .find({ phoneNo })
-      .sort({ createdAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      data: userOrders
-    });
-
-  } catch (error) {
-    console.error("User Orders Fetch Error:", error.message);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});

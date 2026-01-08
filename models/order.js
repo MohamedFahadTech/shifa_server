@@ -2,142 +2,141 @@ const mongoose = require("mongoose");
 
 /* ORDER ITEM (CART ITEM) - No changes here */
 const orderItemSchema = new mongoose.Schema(
-  {
-    category: {
-      type: String,
-      required: true, 
-      trim: true
-    },
+	{
+		category: {
+			type: String,
+			required: true,
+			trim: true
+		},
 
-    fabric: {
-      type: String,
-      required: true, 
-      trim: true
-    },
+		fabric: {
+			type: String,
+			required: true,
+			trim: true
+		},
 
-    serviceMode: {
-      type: String,
-      enum: ["Wash", "Iron", "Wash & Iron"],
-      required: true
-    },
+		serviceMode: {
+			type: String,
+			enum: ["Wash", "Iron", "Wash & Iron"],
+			required: true
+		},
 
-    washQuality: {
-      type: String,
-      enum: ["Normal", "Premium"],
-      default: "Normal"
-    },
+		washQuality: {
+			type: String,
+			enum: ["Normal", "Premium"],
+			default: "Normal"
+		},
 
-    ironQuality: {
-      type: String,
-      enum: ["Normal", "Steam"],
-      default: "Normal"
-    },
+		ironQuality: {
+			type: String,
+			enum: ["Normal", "Steam"],
+			default: "Normal"
+		},
 
-    unitPrice: {
-      type: Number,
-      required: true,
-      min: 0
-    },
+		unitPrice: {
+			type: Number,
+			required: true,
+			min: 0
+		},
 
-    quantity: {
-      type: Number,
-      required: true,
-      min: 1
-    },
+		quantity: {
+			type: Number,
+			required: true,
+			min: 1
+		},
 
-    totalPrice: {
-      type: Number,
-      required: true,
-      min: 0
-    }
-  },
-  { _id: false }
+		totalPrice: {
+			type: Number,
+			required: true,
+			min: 0
+		}
+	},
+	{ _id: false }
 );
 
 /* MAIN ORDER SCHEMA */
-const orderSchema = new mongoose.Schema(
-  {
-    /* USER INFO */
-    userId: {
-      type: String,
-      required: true
-    },
+const orderSchema = new mongoose.Schema({
+	/* USER INFO */
+	userId: {
+		type: String,
+		required: true
+	},
 
-    // --- ADDED THIS FIELD ---
-    phoneNo: {
-      type: String,
-      required: true,
-      trim: true
-    },
+	// --- ADDED THIS FIELD ---
 
-    /* ITEMS */
-    items: {
-      type: [orderItemSchema],
-      required: true
-    },
 
-    /* PRICE SUMMARY */
-    totalAmount: {
-      type: Number,
-      required: true,
-      min: 0
-    },
+	/* ITEMS */
+	items: {
+		type: [orderItemSchema],
+		required: true
+	},
 
-    /* ORDER STATUS */
-    status: {
-      type: String,
-      enum: [
-        "Pending",
-        "Pickup Scheduled",
-        "Picked Up",
-        "Washing",
-        "Ironing",
-        "Ready",
-        "Delivered",
-        "Cancelled"
-      ],
-      default: "Pending"
-    },
+	/* PRICE SUMMARY */
+	totalAmount: {
+		type: Number,
+		required: true,
+		min: 0
+	},
 
-    /* PICKUP DETAILS */
-    pickup: {
-      address: {
-        type: String,
-        required: true
-      },
-      pickupDate: {
-        type: Date
-      },
-      pickupSlot: {
-        type: String // Morning / Evening
-      }
-    },
+	/* ORDER STATUS */
+	status: {
+		type: String,
+		enum: [
+			"Pending",
+			"Pickup Scheduled",
+			"Picked Up",
+			"Washing",
+			"Ironing",
+			"Ready",
+			"Delivered",
+			"Cancelled"
+		],
+		default: "Pending"
+	},
 
-    /* DELIVERY DETAILS */
-    delivery: {
-      expectedDate: {
-        type: Date
-      }
-    },
+	/* PICKUP DETAILS */
+	pickup: {
+		address: {
+			type: String,
+			required: true
+		},
+		pickupDate: {
+			type: Date
+		},
+		pickupSlot: {
+			type: String // Morning / Evening
+		},
+		phoneNo: {
+			type: String,
+			required: true,
+		},
+	},
 
-    /* PAYMENT */
-    payment: {
-      method: {
-        type: String,
-        enum: ["COD", "UPI", "Card"],
-        default: "COD"
-      },
-      status: {
-        type: String,
-        enum: ["Pending", "Paid", "Failed"],
-        default: "Pending"
-      },
-      transactionId: {
-        type: String
-      }
-    }
-  },
-  { timestamps: true }
+	/* DELIVERY DETAILS */
+	delivery: {
+		expectedDate: {
+			type: Date
+		}
+	},
+
+	/* PAYMENT */
+	payment: {
+		method: {
+			type: String,
+			enum: ["COD", "UPI", "Card"],
+			default: "COD"
+		},
+		status: {
+			type: String,
+			enum: ["Pending", "Paid", "Failed"],
+			default: "Pending"
+		},
+		transactionId: {
+			type: String
+		}
+	}
+},
+	{ timestamps: true }
 );
 
 module.exports = mongoose.model("Order", orderSchema);
