@@ -6,7 +6,8 @@ require("dotenv").config({ quiet: true });
 // Import Models
 const user = require("./models/user");
 const service = require("./models/service");
-const order = require("./models/Order");
+const order = require("./models/order");
+const pickup = require("./models/pickup");
 
 const app = express();
 
